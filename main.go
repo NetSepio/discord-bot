@@ -74,4 +74,6 @@ func main(){
 		return 
 	}
 	Start()
+	<-make(chan struct{})
+	return
 }

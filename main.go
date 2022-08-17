@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"io/ioutil"
+	"regexp"
 )
 
 var (
@@ -49,7 +50,7 @@ func Start(){
 		return 
 	}
 	BotId=u.ID;
-	goBot.AddHandler(messageHandler)
+	goBot.AddHandler(validator)
 	err=goBot.Open()
 	if err!=nil{
 		fmt.Println(err);
@@ -58,12 +59,18 @@ func Start(){
 	fmt.Println("Bot is running")
 }
 
-func messageHandler(s *discordgo.Session, m *discordgo.MessageCreate){
+//Check for links in channel
+func validator(s *discordgo.Session, m *discordgo.MessageCreate){
 	if m.Author.ID==BotId{
 		return
 	}
-	if m.Content==BotPrefix+"test"{
-		_,_=s.ChannelMessageSend(m.ChannelID,"test")
+	//Regex check for a link
+	regexCheck:=`^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$`
+	match, _ := regexp.MatchString(regexCheck, m.Content)
+    fmt.Println(match)
+
+	if match==true{
+		_,_=s.ChannelMessageSend(m.ChannelID,"This is a link")
 	}
 }
 

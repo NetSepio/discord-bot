@@ -74,7 +74,7 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate){
     fmt.Println(match)
 
 	if match==true{
-		_,_=s.ChannelMessageSend(m.ChannelID,"This is a link")
+		_,_=s.ChannelMessageSend(m.ChannelID,"Hang on! NetSepio is verifying the link")
 		client := graphql.NewClient("https://query.graph.lazarus.network/subgraphs/name/NetSepio",nil)
 		var q struct {
 				Reviews []struct {
@@ -97,7 +97,15 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate){
 		fmt.Println(i)
 		fmt.Println(string(e)[i:i+40])
 		//get index of } and index of : and substring and display
-	}
+		b := strings.Index(string(e)[i:i+80], ":")
+		c := strings.Index(string(e)[i:i+80], "}")
+		initPrint:=i+b
+		initPrint2:=i+c
+		var sendMessage=string(e)[initPrint+2:initPrint2-1]
+		 fmt.Println(sendMessage)
+		 _,_=s.ChannelMessageSend(m.ChannelID,"The link is classified as: "+sendMessage)
+
+		}	
 }
 
 func main(){

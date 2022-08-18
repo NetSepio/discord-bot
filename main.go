@@ -75,18 +75,22 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate){
 		_,_=s.ChannelMessageSend(m.ChannelID,"This is a link")
 		client := graphql.NewClient("https://query.graph.lazarus.network/subgraphs/name/NetSepio",nil)
 		var q struct {
-			
 				Reviews []struct {
-					SiteSafety string `json:"siteSafety"`
+					DomainAddress string `json:"domainAddress"`
+					SiteSafety    string `json:"siteSafety"`
 				} `json:"reviews"`
-
 		}
 		
 		err := client.Query(context.Background(), &q, nil)
 		if err != nil {
 			fmt.Println(err)
 		}	
-		fmt.Println(q)
+		e, err := json.Marshal(q)
+		fmt.Println(string(e))
+		if err != nil {
+			fmt.Println(err)
+		}	
+
 	}
 }
 

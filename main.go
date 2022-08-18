@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"github.com/hasura/go-graphql-client"
 	"context"
+	"strings"
+
 )
 
 var (
@@ -86,11 +88,15 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate){
 			fmt.Println(err)
 		}	
 		e, err := json.Marshal(q)
-		fmt.Println(string(e))
+		//fmt.Println(string(e))
 		if err != nil {
 			fmt.Println(err)
 		}	
-
+		var substr = "github.com"
+		i := strings.Index(string(e), substr)
+		fmt.Println(i)
+		fmt.Println(string(e)[i:i+40])
+		//get index of } and index of : and substring and display
 	}
 }
 

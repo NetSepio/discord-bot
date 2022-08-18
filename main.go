@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"regexp"
+	"github.com/hasura/go-graphql-client"
+	"context"
 )
 
 var (
@@ -71,6 +73,20 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate){
 
 	if match==true{
 		_,_=s.ChannelMessageSend(m.ChannelID,"This is a link")
+		client := graphql.NewClient("https://query.graph.lazarus.network/subgraphs/name/NetSepio",nil)
+		var q struct {
+			
+				Reviews []struct {
+					SiteSafety string `json:"siteSafety"`
+				} `json:"reviews"`
+
+		}
+		
+		err := client.Query(context.Background(), &q, nil)
+		if err != nil {
+			fmt.Println(err)
+		}	
+		fmt.Println(q)
 	}
 }
 

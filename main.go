@@ -13,113 +13,111 @@ import (
 )
 
 var (
-	Token string
+	Token     string
 	BotPrefix string
-	config *configstruct
+	config    *configstruct
 )
 
-type configstruct struct{
-	Token string `json: "Token"`
+type configstruct struct {
+	Token     string `json: "Token"`
 	BotPrefix string `json: "BotPrefix"`
 }
 
-func ReadConfig() error{
-	file,err:=ioutil.ReadFile("./config.json")
-	if err!=nil{
-		fmt.Println(err);
-		return err;
+func ReadConfig() error {
+	file, err := ioutil.ReadFile("./config.json")
+	if err != nil {
+		fmt.Println(err)
+		return err
 	}
 	fmt.Println(string(file))
-	err= json.Unmarshal(file,&config)
-	if err!=nil{
-		fmt.Println(err);
-		return err;
+	err = json.Unmarshal(file, &config)
+	if err != nil {
+		fmt.Println(err)
+		return err
 	}
-	Token=config.Token
-	BotPrefix=config.BotPrefix
-	return nil;
+	Token = config.Token
+	BotPrefix = config.BotPrefix
+	return nil
 }
 
-var BotId string;
+var BotId string
 var goBot *discordgo.Session
 
-func Start(){
-	goBot,err:=discordgo.New("Bot "+ config.Token)
-	if err!=nil{
-		fmt.Println(err);
-		return 
+func Start() {
+	goBot, err := discordgo.New("Bot " + config.Token)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
-	u,err:=goBot.User("@me")
-	if err!=nil{
-		fmt.Println(err);
-		return 
+	u, err := goBot.User("@me")
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
-	BotId=u.ID;
+	BotId = u.ID
 	goBot.AddHandler(validator)
-	err=goBot.Open()
-	if err!=nil{
-		fmt.Println(err);
-		return 
+	err = goBot.Open()
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 	fmt.Println("Bot is running")
 }
 
 //Check for links in channel
-func validator(s *discordgo.Session, m *discordgo.MessageCreate){
-	if m.Author.ID==BotId{
+func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
+	if m.Author.ID == BotId {
 		return
 	}
 	//Regex check for a link
-	regexCheck:=`^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$`
+	regexCheck := `^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$`
 	match, _ := regexp.MatchString(regexCheck, m.Content)
-    fmt.Println(match)
+	fmt.Println(match)
 
-	if match==true{
-		_,_=s.ChannelMessageSend(m.ChannelID,"Hang on! NetSepio is verifying the link")
-		client := graphql.NewClient("https://query.graph.lazarus.network/subgraphs/name/NetSepio",nil)
+	if match == true {
+		_, _ = s.ChannelMessageSend(m.ChannelID, "Hang on! NetSepio is verifying the link")
+		client := graphql.NewClient("https://query.graph.lazarus.network/subgraphs/name/NetSepio", nil)
 		var q struct {
-				Reviews []struct {
-					DomainAddress string `json:"domainAddress"`
-					SiteSafety    string `json:"siteSafety"`
-				} `json:"reviews"`
+			Reviews []struct {
+				DomainAddress string `json:"domainAddress"`
+				SiteSafety    string `json:"siteSafety"`
+			} `json:"reviews"`
 		}
-		
+
 		err := client.Query(context.Background(), &q, nil)
 		if err != nil {
 			fmt.Println(err)
-		}	
+		}
 		e, err := json.Marshal(q)
-		//fmt.Println(string(e))
 		if err != nil {
 			fmt.Println(err)
-		}	
+		}
 		var substr = m.Content
-		fmt.Print("test")
 		i := strings.Index(string(e), substr)
 		fmt.Println(i)
-		if(i!=-1){
-			fmt.Println(string(e)[i:i+40])
-		//get index of } and index of : and substring and display
-	
-		b := strings.Index(string(e)[i:i+80], ":")
-		c := strings.Index(string(e)[i:i+80], "}")
-		initPrint:=i+b
-		initPrint2:=i+c
+		if i != -1 {
+			fmt.Println(string(e)[i : i+40])
+			b := strings.Index(string(e)[i:i+80], ":")
+			c := strings.Index(string(e)[i:i+80], "}")
+			initPrint := i + b
+			initPrint2 := i + c
+			var sendMessage = string(e)[initPrint+2 : initPrint2-1]
+			fmt.Println(sendMessage)
+			_, _ = s.ChannelMessageSend(m.ChannelID, "***"+m.Content+" is classified as: "+sendMessage+"***")
 
-		var sendMessage=string(e)[initPrint+2:initPrint2-1]
-		 fmt.Println(sendMessage)
-		 _,_=s.ChannelMessageSend(m.ChannelID,"The link is classified as: "+sendMessage)
+		} else {
+			_, _ = s.ChannelMessageSend(m.ChannelID, "***"+m.Content+" is not in our database***")
 
 		}
-		
-		}	
+
+	}
 }
 
-func main(){
-	err:=ReadConfig();
-	if err!=nil{
-		fmt.Println(err);
-		return 
+func main() {
+	err := ReadConfig()
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 	Start()
 	<-make(chan struct{})

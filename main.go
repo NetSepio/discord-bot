@@ -95,7 +95,9 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 			fmt.Printf("The HTTP request failed with error %s\n", err)
 		}
 		data, _ := ioutil.ReadAll(response.Body)
-		fmt.Println(string(data))
+		dataString:=string(data)
+		fmt.Println(dataString)
+		//_, _ = s.ChannelMessageSend(m.ChannelID,string(data))
 		//if data is empty then 
 
 		} else {

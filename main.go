@@ -77,7 +77,7 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		fmt.Print((urlCheck))
 		 queryy:=`
 		{
-			reviews(where: {siteURL:"`+urlCheck+`"}) {
+			reviews(where: {domainAddress_contains:"`+urlCheck+`"}) {
 			  siteURL
 			  siteSafety
 			}
@@ -97,9 +97,7 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		data, _ := ioutil.ReadAll(response.Body)
 		fmt.Println(string(data))
 		//if data is empty then 
-		if (string(data).len()==23){
 
-		}
 		} else {
 		}
 	}

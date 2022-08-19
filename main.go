@@ -1,14 +1,15 @@
 package main
+
 import (
-	"github.com/bwmarrin/discordgo"
-	"fmt"
+	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"regexp"
-	"github.com/hasura/go-graphql-client"
-	"context"
 	"strings"
 
+	"github.com/bwmarrin/discordgo"
+	"github.com/hasura/go-graphql-client"
 )
 
 var (
@@ -92,19 +93,25 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate){
 		if err != nil {
 			fmt.Println(err)
 		}	
-		var substr = "github.com"
+		var substr = m.Content
+		fmt.Print("test")
 		i := strings.Index(string(e), substr)
 		fmt.Println(i)
-		fmt.Println(string(e)[i:i+40])
+		if(i!=-1){
+			fmt.Println(string(e)[i:i+40])
 		//get index of } and index of : and substring and display
+	
 		b := strings.Index(string(e)[i:i+80], ":")
 		c := strings.Index(string(e)[i:i+80], "}")
 		initPrint:=i+b
 		initPrint2:=i+c
+
 		var sendMessage=string(e)[initPrint+2:initPrint2-1]
 		 fmt.Println(sendMessage)
 		 _,_=s.ChannelMessageSend(m.ChannelID,"The link is classified as: "+sendMessage)
 
+		}
+		
 		}	
 }
 

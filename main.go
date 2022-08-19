@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"regexp"
 	"strings"
-
 	"github.com/bwmarrin/discordgo"
 	"github.com/hasura/go-graphql-client"
 )
@@ -29,7 +28,6 @@ func ReadConfig() error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println(string(file))
 	err = json.Unmarshal(file, &config)
 	if err != nil {
 		fmt.Println(err)
@@ -61,7 +59,7 @@ func Start() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Bot is running")
+	fmt.Println("Bot is live")
 }
 
 //Check for links in channel
@@ -72,8 +70,6 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 	//Regex check for a link
 	regexCheck := `^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$`
 	match, _ := regexp.MatchString(regexCheck, m.Content)
-	fmt.Println(match)
-
 	if match == true {
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Hang on! NetSepio is verifying the link")
 		client := graphql.NewClient("https://query.graph.lazarus.network/subgraphs/name/NetSepio", nil)
@@ -83,7 +79,6 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 				SiteSafety    string `json:"siteSafety"`
 			} `json:"reviews"`
 		}
-
 		err := client.Query(context.Background(), &q, nil)
 		if err != nil {
 			fmt.Println(err)
@@ -94,22 +89,17 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		var substr = m.Content
 		i := strings.Index(string(e), substr)
-		fmt.Println(i)
 		if i != -1 {
-			fmt.Println(string(e)[i : i+40])
 			b := strings.Index(string(e)[i:i+80], ":")
 			c := strings.Index(string(e)[i:i+80], "}")
 			initPrint := i + b
 			initPrint2 := i + c
 			var sendMessage = string(e)[initPrint+2 : initPrint2-1]
-			fmt.Println(sendMessage)
-			_, _ = s.ChannelMessageSend(m.ChannelID, "***"+m.Content+" is classified as: "+sendMessage+"***")
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`"+m.Content+" is classified as: "+sendMessage+"`")
 
 		} else {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "***"+m.Content+" is not in our database***")
-
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`"+m.Content+" is not in our database`")
 		}
-
 	}
 }
 

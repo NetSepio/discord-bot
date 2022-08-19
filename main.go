@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"regexp"
 	"time"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -73,15 +72,19 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 	match, _ := regexp.MatchString(regexCheck, m.Content)
 	if match == true {
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Hang on! NetSepio is verifying the link")
+		
+		urlCheck:=m.Content
+		fmt.Print((urlCheck))
+		 queryy:=`
+		{
+			reviews(where: {siteURL:"`+urlCheck+`"}) {
+			  siteURL
+			  siteSafety
+			}
+		  }
+		`
 		jsonData := map[string]string{
-			"query": `
-			{
-				reviews(where: {siteURL: "https://github.com/"}) {
-				  siteURL
-				  siteSafety
-				}
-			  }
-			`,
+			"query": queryy,
 		}
 		jsonValue, _ := json.Marshal(jsonData)
 		request, err := http.NewRequest("POST", "https://query.graph.lazarus.network/subgraphs/name/NetSepio", bytes.NewBuffer(jsonValue))
@@ -93,9 +96,11 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		data, _ := ioutil.ReadAll(response.Body)
 		fmt.Println(string(data))
+		//if data is empty then 
+		if (string(data).len()==23){
 
+		}
 		} else {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "`"+m.Content+" is not in our database`")
 		}
 	}
 

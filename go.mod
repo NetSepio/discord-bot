@@ -2,8 +2,9 @@ module sepio.me/discord
 
 go 1.18
 
+require github.com/bwmarrin/discordgo v0.25.0
+
 require (
-	github.com/bwmarrin/discordgo v0.25.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/graphql-go/graphql v0.8.0 // indirect

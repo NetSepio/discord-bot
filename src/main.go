@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -122,7 +121,6 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		data, _ := ioutil.ReadAll(response.Body)
 		dataString:=string(data)
 		DeciderType(dataString,s,m)
-		
 	}
 }
 

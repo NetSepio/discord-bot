@@ -1,14 +1,16 @@
 package main
 
 import (
-	"context"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"regexp"
 	"strings"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
-	"github.com/hasura/go-graphql-client"
 )
 
 var (
@@ -72,36 +74,50 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 	match, _ := regexp.MatchString(regexCheck, m.Content)
 	if match == true {
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Hang on! NetSepio is verifying the link")
-		client := graphql.NewClient("https://query.graph.lazarus.network/subgraphs/name/NetSepio", nil)
-		var q struct {
-			Reviews []struct {
-				DomainAddress string `json:"domainAddress"`
-				SiteSafety    string `json:"siteSafety"`
-			} `json:"reviews"`
+		
+		urlCheck:=m.Content
+		 queryy:=`
+		{
+			reviews(where: {domainAddress_contains:"`+urlCheck+`"}) {
+			  siteURL
+			  siteSafety
+			}
+		  }
+		`
+		jsonData := map[string]string{
+			"query": queryy,
 		}
-		err := client.Query(context.Background(), &q, nil)
+		jsonValue, _ := json.Marshal(jsonData)
+		request, err := http.NewRequest("POST", "https://query.graph.lazarus.network/subgraphs/name/NetSepio", bytes.NewBuffer(jsonValue))
+		client := &http.Client{Timeout: time.Second * 10}
+		response, err := client.Do(request)
+		//defer response.Body.Close()
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf("The HTTP request failed with error %s\n", err)
 		}
-		e, err := json.Marshal(q)
-		if err != nil {
-			fmt.Println(err)
-		}
-		var substr = m.Content
-		i := strings.Index(string(e), substr)
-		if i != -1 {
-			b := strings.Index(string(e)[i:i+80], ":")
-			c := strings.Index(string(e)[i:i+80], "}")
-			initPrint := i + b
-			initPrint2 := i + c
-			var sendMessage = string(e)[initPrint+2 : initPrint2-1]
-			_, _ = s.ChannelMessageSend(m.ChannelID, "`"+m.Content+" is classified as: "+sendMessage+"`")
+		data, _ := ioutil.ReadAll(response.Body)
+		dataString:=string(data)
+		//fmt.Println(dataString)
+		fmt.Print("Safe: ")
+		fmt.Println( strings.Count(dataString, "Safe"))
+		fmt.Print("Phishing: ")
+		fmt.Println( strings.Count(dataString, "Phishing"))
+		fmt.Print("Very safe: ")
+		fmt.Println( strings.Count(dataString, "Very safe"))
+		fmt.Print("Spyware: ")
+		fmt.Println( strings.Count(dataString, "Spyware"))
+		fmt.Print("genuine: ")
+		fmt.Println( strings.Count(dataString, "genuine"))
+		fmt.Print("Malware: ")
+		fmt.Println( strings.Count(dataString, "Malware"))
+		fmt.Print("Very safe and smooth: ")
+		fmt.Println( strings.Count(dataString, "Very safe and smooth"))
+		//if data is empty then 
 
 		} else {
-			_, _ = s.ChannelMessageSend(m.ChannelID, "`"+m.Content+" is not in our database`")
 		}
 	}
-}
+
 
 func main() {
 	err := ReadConfig()

@@ -90,14 +90,14 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		request, err := http.NewRequest("POST", "https://query.graph.lazarus.network/subgraphs/name/NetSepio", bytes.NewBuffer(jsonValue))
 		client := &http.Client{Timeout: time.Second * 10}
 		response, err := client.Do(request)
-		defer response.Body.Close()
+		//defer response.Body.Close()
 		if err != nil {
 			fmt.Printf("The HTTP request failed with error %s\n", err)
 		}
 		data, _ := ioutil.ReadAll(response.Body)
 		dataString:=string(data)
 		fmt.Println(dataString)
-		//_, _ = s.ChannelMessageSend(m.ChannelID,string(data))
+		
 		//if data is empty then 
 
 		} else {

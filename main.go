@@ -1,13 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"bytes"
 	"net/http"
 	"regexp"
+	"strings"
 	"time"
+
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -74,7 +76,6 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Hang on! NetSepio is verifying the link")
 		
 		urlCheck:=m.Content
-		fmt.Print((urlCheck))
 		 queryy:=`
 		{
 			reviews(where: {domainAddress_contains:"`+urlCheck+`"}) {
@@ -96,8 +97,21 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		data, _ := ioutil.ReadAll(response.Body)
 		dataString:=string(data)
-		fmt.Println(dataString)
-		
+		//fmt.Println(dataString)
+		fmt.Print("Safe: ")
+		fmt.Println( strings.Count(dataString, "Safe"))
+		fmt.Print("Phishing: ")
+		fmt.Println( strings.Count(dataString, "Phishing"))
+		fmt.Print("Very safe: ")
+		fmt.Println( strings.Count(dataString, "Very safe"))
+		fmt.Print("Spyware: ")
+		fmt.Println( strings.Count(dataString, "Spyware"))
+		fmt.Print("genuine: ")
+		fmt.Println( strings.Count(dataString, "genuine"))
+		fmt.Print("Malware: ")
+		fmt.Println( strings.Count(dataString, "Malware"))
+		fmt.Print("Very safe and smooth: ")
+		fmt.Println( strings.Count(dataString, "Very safe and smooth"))
 		//if data is empty then 
 
 		} else {

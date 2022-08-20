@@ -98,26 +98,46 @@ func validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		data, _ := ioutil.ReadAll(response.Body)
 		dataString:=string(data)
 		//fmt.Println(dataString)
+		safe:=strings.Count(dataString, "Safe")
+		phishing:=strings.Count(dataString, "Phishing")
+		vsafe:=strings.Count(dataString, "Very safe")
+		spyware:=strings.Count(dataString, "Spyware")
+		genuine:=strings.Count(dataString, "genuine")
+		malware:=strings.Count(dataString, "Malware")
+		vsafeandsmooth:=strings.Count(dataString, "Very safe and smooth")
+		
 		fmt.Print("Safe: ")
-		fmt.Println( strings.Count(dataString, "Safe"))
+		fmt.Println( safe)
 		fmt.Print("Phishing: ")
-		fmt.Println( strings.Count(dataString, "Phishing"))
+		fmt.Println( phishing)
 		fmt.Print("Very safe: ")
-		fmt.Println( strings.Count(dataString, "Very safe"))
+		fmt.Println( vsafe)
 		fmt.Print("Spyware: ")
-		fmt.Println( strings.Count(dataString, "Spyware"))
+		fmt.Println( spyware)
 		fmt.Print("genuine: ")
-		fmt.Println( strings.Count(dataString, "genuine"))
+		fmt.Println( genuine)
 		fmt.Print("Malware: ")
-		fmt.Println( strings.Count(dataString, "Malware"))
+		fmt.Println( malware)
 		fmt.Print("Very safe and smooth: ")
-		fmt.Println( strings.Count(dataString, "Very safe and smooth"))
+		fmt.Println(vsafeandsmooth)
 		//if data is empty then 
+		if(safe>phishing && safe>vsafe && safe>spyware && safe>genuine && safe>malware && safe>vsafeandsmooth ){
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`The link "+ m.Content+" is classified as Safe`")
 
-		} else {
+		}else if(phishing>safe && phishing>vsafe && phishing>spyware && phishing>genuine && phishing>malware && phishing>vsafeandsmooth){
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`The link "+ m.Content+" is classified as Phishing`")
+
+		}else if(safe>phishing && safe>vsafe && safe>spyware && safe>genuine && safe>malware && safe>vsafeandsmooth){
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`The link "+ m.Content+" is classified as Safe`")
+		}else if(genuine>phishing && genuine>vsafe && genuine>spyware && genuine>safe && genuine>malware && genuine>vsafeandsmooth){
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`The link "+ m.Content+" is classified as Genuine`")
+		}else if(vsafeandsmooth>phishing && vsafeandsmooth>vsafe && vsafeandsmooth>spyware && vsafeandsmooth>safe && vsafeandsmooth>malware && vsafeandsmooth>genuine){
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`The link "+ m.Content+" is classified as vsafeandsmooth`")
+		}else{
+			_, _ = s.ChannelMessageSend(m.ChannelID, "`The link "+ m.Content+" is not tested`")
 		}
 	}
-
+}
 
 func main() {
 	err := ReadConfig()

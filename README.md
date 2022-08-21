@@ -16,6 +16,10 @@ NetSepio is currently available as:
 - Cross platform
 
 ## Main Contributors
+**Golang/Application Dev**
+
+[github.com/ritwikgoel](https://github.com/ritwikgoel)
+
 **Speaker, Trainer & a Tech Enthusiast**
 
 [github.com/Shachindra](https://github.com/Shachindra)

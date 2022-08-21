@@ -5,7 +5,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-
 func Start() {
 	goBot, err := discordgo.New("Bot " + config.Token)
 	if err != nil {

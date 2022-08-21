@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 )
+var BotId string
+var goBot *discordgo.Session
 
 var (
 	Token     string
@@ -16,10 +18,6 @@ type configstruct struct {
 	BotPrefix string `json: "BotPrefix"`
 }
 
-var BotId string
-var goBot *discordgo.Session
-
-//Check for links in channel
 
 
 func main() {

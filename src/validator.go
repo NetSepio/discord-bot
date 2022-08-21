@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"regexp"
 	"time"
 	"github.com/bwmarrin/discordgo"
 	"mvdan.cc/xurls/v2"
@@ -21,13 +20,9 @@ func Validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 	fmt.Print(rxRelaxed.FindString("Do gophers live in golan?") )
 	if(rxRelaxed.FindString(m.Content)!=""){
 		fmt.Println(rxRelaxed.FindString(m.Content) )
-	}
-	regexCheck := `^((https?|ftp|smtp):\/\/)?(www.)?[a-z0-9]+\.[a-z]+(\/[a-zA-Z0-9#]+\/?)*$`
-	match, _ := regexp.MatchString(regexCheck, m.Content)
-	if match == true {
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Hang on! NetSepio is verifying the link")
-		urlCheck:=m.Content
-		 queryy:=`
+		urlCheck:=rxRelaxed.FindString(m.Content)
+		queryy:=`
 		{
 			reviews(where: {domainAddress_contains:"`+urlCheck+`"}) {
 			  siteURL
@@ -49,6 +44,6 @@ func Validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 		data, _ := ioutil.ReadAll(response.Body)
 		dataString:=string(data)
 		DeciderType(dataString,s,m)
-	
 	}
+
 }

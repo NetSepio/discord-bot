@@ -17,7 +17,6 @@ func Validator(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 	//Regex check for a link
 	rxRelaxed := xurls.Relaxed()
-	fmt.Print(rxRelaxed.FindString("Do gophers live in golan?") )
 	if(rxRelaxed.FindString(m.Content)!=""){
 		fmt.Println(rxRelaxed.FindString(m.Content) )
 		_, _ = s.ChannelMessageSend(m.ChannelID, "Hang on! NetSepio is verifying the link")

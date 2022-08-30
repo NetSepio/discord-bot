@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: sepio-bot
-          image: lazarusnetwork/discord-sepio
+          image: 560914023379.dkr.ecr.us-east-2.amazonaws.com/discord-sepio
           resources:
             limits:
               memory: "128Mi"
@@ -21,7 +21,7 @@ spec:
           volumeMounts:
             - mountPath: "/app/config.json"
               subPath: "config.json"
-              name: sepio-bot-config-file
+              name: s   epio-bot-config-file
               readOnly: true
       volumes:
         - name: sepio-bot-config-file

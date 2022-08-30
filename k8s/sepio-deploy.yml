@@ -26,4 +26,4 @@ spec:
       volumes:
         - name: sepio-bot-config-file
           secret:
-            secretName: sepio-bot-config-secret
+            secretName: discord-sepio-config-secret

@@ -21,7 +21,7 @@ spec:
           volumeMounts:
             - mountPath: "/app/config.json"
               subPath: "config.json"
-              name: s   epio-bot-config-file
+              name: sepio-bot-config-file
               readOnly: true
       volumes:
         - name: sepio-bot-config-file

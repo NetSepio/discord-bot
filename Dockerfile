@@ -10,5 +10,4 @@ RUN apk add --no-cache git && go build -o discord-sepio ./src && apk del git
 FROM alpine
 WORKDIR /app
 COPY --from=builder /app/discord-sepio .
-RUN apk add --no-cache chromium
 CMD [ "./discord-sepio" ]
